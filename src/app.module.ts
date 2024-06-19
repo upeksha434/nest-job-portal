@@ -5,13 +5,14 @@ import { FilesModule } from './files/files.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { PrismaService } from './prisma.service';
 import { ConfigModule } from '@nestjs/config';
+import { EmployerModule } from './employer/employer.module';
 
 
 @Module({
   imports: [
    AuthModule, FilesModule,ConfigModule.forRoot({
       isGlobal: true,
-    })
+    }), EmployerModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
