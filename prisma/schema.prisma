@@ -31,6 +31,7 @@ model User{
   role Role @relation(fields: [roleId], references: [id])
   emailVerifications EmailVerifications[]
   forgetPassword     ForgetPassword[]
+  profilePics ProfilePics[]
 
 }
 model Role {
@@ -63,6 +64,14 @@ model ForgetPassword {
   updatedAt DateTime @updatedAt
 
   // Relations
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ProfilePics{
+  id Int @id @default(autoincrement())
+  userId Int
+  url String
+
   user User @relation(fields: [userId], references: [id])
 }
 
