@@ -11,6 +11,7 @@ export class msgDto {
     
     employerId: number;
     employeeId: number;
+    sender: number;
     message: string;
     
 }

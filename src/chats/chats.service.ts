@@ -7,12 +7,16 @@ export class ChatsService {
     constructor(private readonly prisma: PrismaService) {}
 
     async sendMessage(data:msgDto): Promise<object> {
+        console.log(data.sender,"sender Id",data);
         return await this.prisma.chathistory.create({
+            
             data: {
                 employerId: data.employerId,
                 employeeId: data.employeeId,
+                senderId: data.sender,
                 message: data.message,
             },
+
         });
     }
 
