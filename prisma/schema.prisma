@@ -93,6 +93,7 @@ model chathistory{
   id Int @id @default(autoincrement())
   employerId Int
   employeeId Int
+  senderId Int @default(0)
   message String
   isEdited Boolean @default(false)
   isDeleted Boolean @default(false)
