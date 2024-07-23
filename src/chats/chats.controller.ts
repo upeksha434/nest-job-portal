@@ -15,4 +15,8 @@ export class ChatsController {
   async getMessages(@Body() data: { employerId: number; employeeId: number }) {
     return await this.chatsService.getMessages(data.employerId, data.employeeId);
   }
+  @Post('getEmployeeChats')
+  async getEmployeeChats(@Body() data: { employeeId: number }) {
+    return await this.chatsService.getEmployeeChats(data.employeeId);
+  }
 }

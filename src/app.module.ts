@@ -7,13 +7,14 @@ import { PrismaService } from './prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { EmployerModule } from './employer/employer.module';
 import { ChatsModule } from './chats/chats.module';
+import { EmployeeModule } from './employee/employee.module';
 
 
 @Module({
   imports: [
    AuthModule, FilesModule,ConfigModule.forRoot({
       isGlobal: true,
-    }), EmployerModule, ChatsModule
+    }), EmployerModule, ChatsModule, EmployeeModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

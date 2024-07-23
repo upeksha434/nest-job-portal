@@ -34,6 +34,56 @@ export class ChatsService {
             },
         });
     }
+    async getEmployeeChats(employeeId: number): Promise<object[]> {
+        // Fetch all chat histories for the given employee
+        const chats = await this.prisma.chathistory.findMany({
+          where: {
+            employeeId: employeeId,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        });
+    
+        // Group by employerId
+        const groupedChats = chats.reduce((acc, chat) => {
+          if (!acc[chat.employerId]) {
+            acc[chat.employerId] = [];
+          }
+          acc[chat.employerId].push(chat);
+          return acc;
+        }, {} as Record<number, typeof chats>);
+    
+        // Fetch the employer details and get the most recent message for each group
+        const chatDetails = await Promise.all(
+          Object.keys(groupedChats).map(async (employerId) => {
+            const chatsWithEmployer = groupedChats[+employerId];
+            const mostRecentMessage = chatsWithEmployer[0];
+            const profilePic = await this.prisma.profilePics.findFirst({
+                where:{
+                    userId: +employerId,
+                }
+            });
+            console.log(profilePic,+employerId);
+            const employer = await this.prisma.user.findUnique({
+              where: {
+                id: +employerId,
+              },
+            });
+    
+            return {
+              employerId: +employerId,
+              employerName: employer.fname + " " + employer.lname,
+              employerProfilePic: profilePic.url,
+              message: mostRecentMessage.message,
+              senderId: mostRecentMessage.senderId,
+              createdAt: mostRecentMessage.createdAt,
+            };
+          })
+        );
+    
+        return chatDetails;
+      }
 
     async editMsg(msgId: number,data:msgDto): Promise<object> {
        var msg = await this.prisma.chathistory.findUnique({
