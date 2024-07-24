@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { PostReviewDto } from './employeeDto/postReview.dto';
 @Injectable()
 export class EmployeeService {
     constructor(private readonly prisma: PrismaService) {}
@@ -20,6 +21,13 @@ export class EmployeeService {
                 },
             });
             ratings[i]['employerName'] = user.fname + ' ' + user.lname;
+
+            let profilePic = await this.prisma.profilePics.findFirst({
+                where: {
+                    userId: ratings[i].employerId,
+                },
+            });
+            ratings[i]['profilePic'] = profilePic ? profilePic.url : 'https://myjopportal-sem6.s3.eu-north-1.amazonaws.com/3da39-no-user-image-icon-27.webp';
         }
     
         let totalRatings = ratings.length;
@@ -33,6 +41,33 @@ export class EmployeeService {
             totalRatings: totalRatings
         };
     }
+
+    async postReview(data:PostReviewDto): Promise<object> {
+        return await this.prisma.rating.create({
+            data: {
+                employerId: data.employerId,
+                employeeId: data.employeeId,
+                rating: data.rating,
+                review: data.review,
+            },
+        });
+    }
+
+    async editReview(data:PostReviewDto,id:number): Promise<object> {
+        return await this.prisma.rating.update({
+            where: {
+                
+                id:id
+                
+            },
+            data: {
+                rating: data.rating,
+                review: data.review,
+            },
+        });
+
+    }
+
     
 
 
