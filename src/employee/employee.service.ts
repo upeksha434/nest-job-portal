@@ -53,11 +53,11 @@ export class EmployeeService {
         });
     }
 
-    async editReview(data:PostReviewDto,id:number): Promise<object> {
+    async editReview(data:PostReviewDto,id:string): Promise<object> {
         return await this.prisma.rating.update({
             where: {
                 
-                id:id
+                id: parseInt(id),
                 
             },
             data: {

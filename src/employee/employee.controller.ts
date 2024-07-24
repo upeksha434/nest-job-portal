@@ -24,7 +24,7 @@ export class EmployeeController {
   }
 
   @Post('editReview/:id')
-  async editReview(@Body() data: PostReviewDto, @Param('id') id: number) {
+  async editReview(@Body() data: PostReviewDto, @Param('id') id: string) {
     return await this.employeeService.editReview(data, id);
   }
 
