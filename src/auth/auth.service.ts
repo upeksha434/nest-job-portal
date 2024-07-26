@@ -6,6 +6,8 @@ import { compare, hash } from 'bcrypt';
 import { ForgetPasswordDto, LoginDto } from './dto/login.dto';
 import { jwt_config } from 'src/config/jwt';
 import * as Brevo from '@getbrevo/brevo'; 
+import { profile } from 'node:console';
+import { parse } from 'node:path';
 @Injectable()
 export class AuthService {
 
@@ -201,6 +203,31 @@ export class AuthService {
           message:'UI should direct to the OTP verification page',
         };
       }
+
+
+      async getProfileInfo(id:string){
+        const user = await this.prisma.user.findUnique({
+          where:{
+            id:parseInt(id)
+          }
+        });
+       let profilepic = await this.prisma.profilePics.findFirst({
+          where:{
+            userId:user.id
+          }
+        });
+        console.log(profilepic);
+        console.log(user);
+        user['profilePic'] = profilepic.url;
+        user['profilePicId'] = profilepic.id;
+        return user;
+      }
+
+      
+
+
+
+
 
 
 
