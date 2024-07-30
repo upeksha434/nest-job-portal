@@ -23,6 +23,41 @@ export class FilesService {
     }
 
 
+    async uploadNewProfilePic(file:Express.Multer.File,ext:string,profilePicId:number):Promise<any>{
+      if (!file) {
+        throw new Error('File is undefined or null');
+      }
+
+      const fileName = `${uuidv4()}${ext}`;
+      const command = new PutObjectCommand({
+          Bucket: 'myjopportal-sem6',
+          Key: fileName,
+          Body: file.buffer,
+          ContentType:'image/jpeg',
+      });
+      //should also remove the previous picture from bucket
+
+      const response = await this.s3Client.send(command);
+
+      const region = this.config.getOrThrow('AWS_S3_REGION');
+      const bucketName = 'myjopportal-sem6';
+      const imageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${fileName}`;
+
+      await this.prisma.profilePics.update({
+        where:{
+          id:profilePicId
+        },
+        data:{
+          url:imageUrl
+        }
+      })
+      return imageUrl;
+
+
+
+    }
+
+
     async saveFileS3(file:Express.Multer.File, ext:string, userId:number): Promise<any> {
       console.log(this.config.get('AWS_ACCESS_KEY_ID'))
         if (!file) {

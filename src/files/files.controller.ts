@@ -25,6 +25,23 @@ async saveFileS3(@UploadedFile(
   return result;
 }
 
+@Post('/upload-new-profile-pic/:profilePicId')
+@UseInterceptors(FileInterceptor('file'))
+async uploadNewProfilePic(@UploadedFile(
+  new ParseFilePipe({
+    validators: [
+      //new MaxFileSizeValidator({maxSize:1000}),
+      new FileTypeValidator({fileType:'image/jpeg'})
+    ]
+  })
+) file: Express.Multer.File, @Body() body:object, @Param('profilePicId') profilePicId:number): Promise<any> {
+
+  let result = await this.filesService.uploadNewProfilePic(file, body['ext'],profilePicId);
+  console.log("imageURL",result)
+
+  return result;
+}
+
 
   @Post('/get-file-s3')
   async getFileS3(@Body() body:object): Promise<any> {
