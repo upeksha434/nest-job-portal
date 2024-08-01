@@ -45,7 +45,7 @@ export class FilesService {
 
       await this.prisma.profilePics.update({
         where:{
-          id:profilePicId
+          id:parseInt(profilePicId.toString())
         },
         data:{
           url:imageUrl
