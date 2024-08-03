@@ -71,3 +71,26 @@ export class ValidationDto {
     @IsString()
     email: string;
   }
+
+export class userInfoDto{
+    @IsNotEmpty()
+    @IsString()
+    fname: string;
+
+    @IsNotEmpty()
+    @IsString()
+    lname: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @IsEmail()
+    email: string;
+    
+    location?: string;
+    jobType?: string;
+    @IsNotEmpty()
+    @IsString()
+
+    profileDescription: string;
+    hourlyRate?: number;
+}

@@ -25,7 +25,7 @@ async saveFileS3(@UploadedFile(
   return result;
 }
 
-@Post('/upload-new-profile-pic/:profilePicId')
+@Post('/uploadNewProfilePic/:profilePicId')
 @UseInterceptors(FileInterceptor('file'))
 async uploadNewProfilePic(@UploadedFile(
   

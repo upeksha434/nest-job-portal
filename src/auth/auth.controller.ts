@@ -1,6 +1,6 @@
-import { Body, Controller, Post, Get, Param } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto, ValidationDto } from './dto/register.dto';
+import { RegisterDto, userInfoDto, ValidationDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
@@ -24,6 +24,11 @@ export class AuthController {
   @Get('profile/:id')
   async getProfileInfo(@Param ('id') id:string){
     return await this.authService.getProfileInfo(id);
+  }
+
+  @Put('updateProfile/:id')
+  async updateProfile(@Param ('id') id:string, @Body() data: userInfoDto){
+    return await this.authService.updateProfileInfo(id, data);
   }
 
 }
