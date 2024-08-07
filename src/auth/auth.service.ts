@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDto, userInfoDto } from './dto/register.dto';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
@@ -220,6 +220,42 @@ export class AuthService {
         console.log(user);
         user['profilePic'] = profilepic.url;
         user['profilePicId'] = profilepic.id;
+        return user;
+      }
+
+      async updateProfileInfo(id:string,data:userInfoDto){
+        console.log(data);
+        // const user = await this.prisma.user.update({
+        //   where:{
+        //     id:parseInt(id)
+        //   },
+        //   data:{
+        //     ...data
+        //   }
+        // });
+        const oldUser = await this.prisma.user.findUnique({
+          where:{
+            id:parseInt(id)
+          }
+        });
+        
+        //find the changes in the data and update the user
+        let changes = {};
+        for(let key in data){
+          if(data[key] != oldUser[key] && data[key] != ''){
+            changes[key] = data[key];
+          }
+        }
+        console.log(changes);
+        const user = await this.prisma.user.update({
+          where:{
+            id:parseInt(id)
+          },
+          data:{
+            ...changes
+          }
+        });
+
         return user;
       }
 
