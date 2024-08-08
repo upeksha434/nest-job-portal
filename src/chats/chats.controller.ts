@@ -16,7 +16,12 @@ export class ChatsController {
     return await this.chatsService.getMessages(data.employerId, data.employeeId);
   }
   @Post('getEmployeeChats')
-  async getEmployeeChats(@Body() data: { employeeId: number }) {
+  async getEmployeeChats(@Body() data: { employeeId: number ,roleId:number}) {
+    if(data.roleId==1){
+      return await this.chatsService.getEmployerChats(data.employeeId);
+    }
+    else{
     return await this.chatsService.getEmployeeChats(data.employeeId);
+    }
   }
 }

@@ -34,6 +34,50 @@ export class ChatsService {
             },
         });
     }
+    async getEmployerChats(employerId: number): Promise<object[]> {
+      const chats = await this.prisma.chathistory.findMany({
+        where: {
+          employerId: employerId,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+      const groupedChats = chats.reduce((acc, chat) => {
+        if (!acc[chat.employeeId]) {
+          acc[chat.employeeId] = [];
+        }
+        acc[chat.employeeId].push(chat);
+        return acc;
+      }, {} as Record<number, typeof chats>);
+
+      const chatDetails = await Promise.all(
+        Object.keys(groupedChats).map(async (employeeId) => {
+          const chatsWithEmployee = groupedChats[+employeeId];
+          const mostRecentMessage = chatsWithEmployee[0];
+          const profilePic = await this.prisma.profilePics.findFirst({
+              where:{
+                  userId: +employeeId,
+              }
+          });
+          const employee = await this.prisma.user.findUnique({
+            where: {
+              id: +employeeId,
+            },
+          });
+
+          return {
+            OtherEndId: +employeeId,
+            OtherEndName: employee.fname + " " + employee.lname,
+            OtherEndProfilePic: profilePic.url,
+            message: mostRecentMessage.message,
+            senderId: mostRecentMessage.senderId,
+            createdAt: mostRecentMessage.createdAt,
+          };
+        })
+      );
+      return chatDetails;
+    }
     async getEmployeeChats(employeeId: number): Promise<object[]> {
         // Fetch all chat histories for the given employee
         const chats = await this.prisma.chathistory.findMany({
@@ -72,9 +116,9 @@ export class ChatsService {
             });
     
             return {
-              employerId: +employerId,
-              employerName: employer.fname + " " + employer.lname,
-              employerProfilePic: profilePic.url,
+              OtherEndId: +employerId,
+              OtherEndName: employer.fname + " " + employer.lname,
+              OtherEndProfilePic: profilePic.url,
               message: mostRecentMessage.message,
               senderId: mostRecentMessage.senderId,
               createdAt: mostRecentMessage.createdAt,
